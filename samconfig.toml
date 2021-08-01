@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "minty"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ayydveqikob4"
+s3_prefix = "minty"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
