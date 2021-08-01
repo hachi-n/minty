@@ -2,8 +2,8 @@ package notifiers
 
 import (
 	"github.com/hachi-n/minty/functions/internal/config"
-	line2 "github.com/hachi-n/minty/functions/internal/models/notifiers/line"
-	slack2 "github.com/hachi-n/minty/functions/internal/models/notifiers/slack"
+	"github.com/hachi-n/minty/functions/internal/models/notifiers/line"
+	"github.com/hachi-n/minty/functions/internal/models/notifiers/slack"
 )
 
 type Notifier interface {
@@ -18,9 +18,9 @@ func NewNotifier(messages []byte) Notifier {
 	switch notificationType {
 	case "slack":
 		slackChannel := options[config.SLACK_CHANNEL_ENV]
-		d = slack2.NewSlack(slackChannel, messages)
+		d = slack.NewSlack(slackChannel, messages)
 	case "line":
-		d = line2.NewLine(messages)
+		d = line.NewLine(messages)
 	}
 	return d
 }

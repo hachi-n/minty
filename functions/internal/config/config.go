@@ -2,12 +2,11 @@ package config
 
 import "fmt"
 
-
 var SettingConfig *Config
 
 type Config struct {
-	Aws *AwsConfig
-	S3 * S3Config
+	Aws    *AwsConfig
+	S3     *S3Config
 	Option Option
 }
 

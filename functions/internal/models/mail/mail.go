@@ -32,7 +32,6 @@ func (p *Mail) parse() (*mail.Message, error) {
 	if p.msg != nil {
 		return p.msg, nil
 	}
-
 	msg, err := mail.ReadMessage(p.source)
 	if err != nil {
 		return nil, err

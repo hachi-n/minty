@@ -4,63 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/hachi-n/minty/functions/internal/aws/lambda/events"
 	"github.com/hachi-n/minty/functions/internal/config"
 	"github.com/hachi-n/minty/functions/internal/handlers"
 	"os"
-	"time"
 )
 
-type MyEvent struct {
-	Records []struct {
-		EventSource  string `json:"eventSource"`
-		EventVersion string `json:"eventVersion"`
-		Ses          struct {
-			Mail struct {
-				CommonHeaders struct {
-					Date       string   `json:"date"`
-					From       []string `json:"from"`
-					MessageID  string   `json:"messageId"`
-					ReturnPath string   `json:"returnPath"`
-					Subject    string   `json:"subject"`
-					To         []string `json:"to"`
-				} `json:"commonHeaders"`
-				Destination []string `json:"destination"`
-				Headers     []struct {
-					Name  string `json:"name"`
-					Value string `json:"value"`
-				} `json:"headers"`
-				HeadersTruncated bool      `json:"headersTruncated"`
-				MessageID        string    `json:"messageId"`
-				Source           string    `json:"source"`
-				Timestamp        time.Time `json:"timestamp"`
-			} `json:"mail"`
-			Receipt struct {
-				Action struct {
-					FunctionArn    string `json:"functionArn"`
-					InvocationType string `json:"invocationType"`
-					Type           string `json:"type"`
-				} `json:"action"`
-				DkimVerdict struct {
-					Status string `json:"status"`
-				} `json:"dkimVerdict"`
-				ProcessingTimeMillis int      `json:"processingTimeMillis"`
-				Recipients           []string `json:"recipients"`
-				SpamVerdict          struct {
-					Status string `json:"status"`
-				} `json:"spamVerdict"`
-				SpfVerdict struct {
-					Status string `json:"status"`
-				} `json:"spfVerdict"`
-				Timestamp    time.Time `json:"timestamp"`
-				VirusVerdict struct {
-					Status string `json:"status"`
-				} `json:"virusVerdict"`
-			} `json:"receipt"`
-		} `json:"ses"`
-	} `json:"Records"`
-}
-
-func initializeConfig(event MyEvent) error {
+func initializeConfig(event events.AmazonSesEvent) error {
 	awsConfig := &config.AwsConfig{
 		AccessKey: os.Getenv(config.ACCESS_KEY_ENV),
 		SecretKey: os.Getenv(config.SECRET_KEY_ENV),
@@ -74,13 +24,14 @@ func initializeConfig(event MyEvent) error {
 	}
 
 	options := make(config.Option)
-
 	notificationType := os.Getenv(config.NOTIFICATION_TYPE_ENV)
 	switch notificationType {
 	case "slack":
 		options[config.SLACK_CHANNEL_ENV] = os.Getenv(config.SLACK_CHANNEL_ENV)
 		options[config.SLACK_API_URL_ENV] = os.Getenv(config.SLACK_API_URL_ENV)
 	case "line":
+		//TODO
+		// LINE Setting.
 	}
 
 	options[config.NOTIFICATION_TYPE_ENV] = notificationType
@@ -97,7 +48,7 @@ func initializeConfig(event MyEvent) error {
 	return nil
 }
 
-func handler(ctx context.Context, event MyEvent) error {
+func handler(ctx context.Context, event events.AmazonSesEvent) error {
 	err := initializeConfig(event)
 	if err != nil {
 		return err
